@@ -45,7 +45,7 @@
                     @endforeach
                 @else
                     @php
-                        $moduleSlug = strtolower($module);
+                        $moduleSlug = \Illuminate\Support\Str::slug($module);
                         $isActive = false;
                         foreach($items as $item) {
                             if(request()->routeIs(explode('.', $item->slug)[0] . '.*')) {

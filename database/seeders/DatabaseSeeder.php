@@ -7,6 +7,7 @@ use App\Models\Roles\Role;
 use App\Models\Roles\Permission;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,7 +16,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Crear permisos iniciales
+        // Sincronizar permisos desde las rutas primero
+        Artisan::call('permissions:sync');
+
+        // Crear permisos manuales adicionales (si es necesario)
         $permissions = [
             ['nombre' => 'Ver Roles', 'slug' => 'roles.index', 'descripcion' => 'Permite ver la lista de roles'],
             ['nombre' => 'Crear Roles', 'slug' => 'roles.create', 'descripcion' => 'Permite crear nuevos roles'],
@@ -41,6 +45,12 @@ class DatabaseSeeder extends Seeder
 
         foreach ($roles as $roleData) {
             $role = Role::firstOrCreate(['slug' => $roleData['slug']], $roleData);
+
+            // El administrador siempre tiene todos los permisos
+            if ($role->slug === 'admin') {
+                $allPermissions = Permission::all()->pluck('id');
+                $role->permissions()->sync($allPermissions);
+            }
 
             // Asignar algunos permisos al supervisor por defecto
             if ($role->slug === 'supervisor') {

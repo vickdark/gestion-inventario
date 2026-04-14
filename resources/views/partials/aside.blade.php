@@ -77,6 +77,46 @@
                     </div>
                 @endif
             @endforeach
+
+            <!-- Sección de Demo Eventos (Hardcoded para la demo) -->
+            <div class="px-4 py-3 mt-2">
+                <span class="text-sidebar-muted fw-bold small text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.1em;">Demo Eventos</span>
+            </div>
+
+            <a class="nav-link {{ request()->routeIs('eventos.dashboard') ? 'active' : '' }}" href="{{ route('eventos.dashboard') }}">
+                <i class="fa-solid fa-chart-line"></i>
+                <span class="app-link-text">Panel Eventos</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('eventos.clientes.index') ? 'active' : '' }}" href="{{ route('eventos.clientes.index') }}">
+                <i class="fa-solid fa-users-viewfinder"></i>
+                <span class="app-link-text">Clientes</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('eventos.equipos.index') ? 'active' : '' }}" href="{{ route('eventos.equipos.index') }}">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span class="app-link-text">Equipos</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('eventos.paquetes.index') ? 'active' : '' }}" href="{{ route('eventos.paquetes.index') }}">
+                <i class="fa-solid fa-box-archive"></i>
+                <span class="app-link-text">Paquetes</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('eventos.agenda.index') ? 'active' : '' }}" href="{{ route('eventos.agenda.index') }}">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span class="app-link-text">Agenda</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('eventos.cotizaciones.index') ? 'active' : '' }}" href="{{ route('eventos.cotizaciones.index') }}">
+                <i class="fa-solid fa-file-invoice"></i>
+                <span class="app-link-text">Cotizaciones</span>
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('eventos.logistica.index') ? 'active' : '' }}" href="{{ route('eventos.logistica.index') }}">
+                <i class="fa-solid fa-truck-fast"></i>
+                <span class="app-link-text">Logística</span>
+            </a>
         </nav>
 
         <div class="app-sidebar-footer">

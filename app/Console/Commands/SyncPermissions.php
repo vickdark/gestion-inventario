@@ -97,6 +97,25 @@ class SyncPermissions extends Command
      */
     protected function generateName($slug)
     {
+        if ($slug === 'dashboard') return 'Dashboard General';
+        
+        if (str_starts_with($slug, 'eventos.')) {
+            $name = str_replace('eventos.', '', $slug);
+            $name = str_replace('.index', '', $name);
+            
+            $names = [
+                'dashboard' => 'Panel Eventos',
+                'clientes' => 'Clientes',
+                'equipos' => 'Equipos',
+                'paquetes' => 'Paquetes',
+                'agenda' => 'Agenda',
+                'cotizaciones' => 'Cotizaciones',
+                'logistica' => 'Logística',
+            ];
+            
+            return $names[$name] ?? ucfirst($name);
+        }
+
         if (str_starts_with($slug, 'dashboard.')) {
             $role = ucfirst(str_replace('dashboard.', '', $slug));
             return "Dashboard {$role}";
@@ -188,6 +207,23 @@ class SyncPermissions extends Command
     {
         if ($slug === 'dashboard') return 'fa-solid fa-gauge-high';
 
+        if (str_starts_with($slug, 'eventos.')) {
+            $name = str_replace('eventos.', '', $slug);
+            $name = str_replace('.index', '', $name);
+            
+            $icons = [
+                'dashboard' => 'fa-solid fa-chart-line',
+                'clientes' => 'fa-solid fa-users-viewfinder',
+                'equipos' => 'fa-solid fa-boxes-stacked',
+                'paquetes' => 'fa-solid fa-box-archive',
+                'agenda' => 'fa-solid fa-calendar-days',
+                'cotizaciones' => 'fa-solid fa-file-invoice',
+                'logistica' => 'fa-solid fa-truck-fast',
+            ];
+            
+            return $icons[$name] ?? 'fa-solid fa-circle-dot';
+        }
+
         $parts = explode('.', $slug);
         $module = count($parts) > 1 ? $parts[count($parts) - 2] : 'General';
 
@@ -212,6 +248,8 @@ class SyncPermissions extends Command
     protected function generateModuleName($slug)
     {
         if ($slug === 'dashboard') return 'Dashboard';
+        
+        if (str_starts_with($slug, 'eventos.')) return 'Gestión Eventos';
 
         $parts = explode('.', $slug);
         if (count($parts) <= 1) return 'General';

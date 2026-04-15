@@ -13,8 +13,12 @@ class RoleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            $roles = Role::withCount('users')->get();
+            return response()->json(['data' => $roles, 'total' => $roles->count()]);
+        }
         $roles = Role::withCount('users')->get();
         return view('roles.index', compact('roles'));
     }

@@ -4,7 +4,7 @@ Este proyecto es un **sistema de gestión de inventario** diseñado para ser só
 
 Lo que antes tomaba días de configuración manual, aquí se ha centralizado y optimizado para estar listo en menos de 12 horas, proporcionando una estructura profesional desde el primer minuto.
 
----
+--- 
 
 ## 💎 Características Principales
 

@@ -1,12 +1,19 @@
 <aside class="app-sidebar">
     <div class="app-sidebar-inner">
         <div class="app-sidebar-brand px-4 py-3 d-flex align-items-center gap-3">
-            <div class="app-brand-logo bg-primary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px; min-width: 40px;">
-                <i class="fa-solid fa-rocket text-primary fs-4"></i>
-            </div>
+            @php $logo = \App\Models\Setting::getByKey('app_logo'); @endphp
+            @if($logo)
+                <div class="app-brand-logo bg-white rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px; min-width: 40px;">
+                    <img src="{{ asset('storage/' . $logo) }}" alt="Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
+            @else
+                <div class="app-brand-logo bg-primary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px; min-width: 40px;">
+                    <i class="fa-solid fa-rocket text-primary fs-4"></i>
+                </div>
+            @endif
             <div class="app-brand-info overflow-hidden">
-                <span class="app-brand-text fw-bold text-white fs-5 lh-1 d-block">{{ config('app.name', 'Laravel') }}</span>
-                <span class="text-sidebar-muted fw-medium" style="font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase;">Administración de Inventario</span>
+                <span class="app-brand-text fw-bold text-white fs-5 lh-1 d-block">{{ \App\Models\Setting::getByKey('app_name', config('app.name', 'Laravel')) }}</span>
+                <span class="text-sidebar-muted fw-medium" style="font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase;">{{ \App\Models\Setting::getByKey('sidebar_title', 'Administración de Inventario') }}</span>
             </div>
         </div>
 

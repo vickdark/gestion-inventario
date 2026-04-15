@@ -23,8 +23,10 @@ export default class DataGrid {
             resizable: true,
             sort: true,
             pagination: { 
-                limit: 10,
-                server: options.url ? true : false
+                limit: options.limit || 10,
+                server: options.url ? true : false,
+                summary: true,
+                buttonsCount: 5
             },
             search: {
                 server: options.url ? true : false
@@ -62,8 +64,39 @@ export default class DataGrid {
         }
         this.instance = new window.Gridjs.Grid(this.options);
         this.instance.render(document.getElementById(this.elementId));
+        
+        // Listener para inyectar los nombres de las columnas en los data-attributes para el modo responsive
+        this.instance.on('ready', () => this.injectColumnLabels());
+        this.instance.on('updated', () => this.injectColumnLabels());
+
         this.addExportButtons();
         return this.instance;
+    }
+
+    /**
+     * Inyecta el nombre de la columna en cada celda para el diseño responsive (modo card)
+     */
+    injectColumnLabels() {
+        const wrapper = document.getElementById(this.elementId);
+        if (!wrapper) return;
+
+        // Esperar un momento a que el DOM se actualice completamente
+        setTimeout(() => {
+            const head = wrapper.querySelector('.gridjs-thead');
+            if (!head) return;
+
+            const colNames = Array.from(head.querySelectorAll('th')).map(th => th.innerText.trim());
+            const rows = wrapper.querySelectorAll('.gridjs-tbody .gridjs-tr');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('.gridjs-td');
+                cells.forEach((cell, index) => {
+                    if (colNames[index]) {
+                        cell.setAttribute('data-column', colNames[index]);
+                    }
+                });
+            });
+        }, 50);
     }
 
     addExportButtons() {

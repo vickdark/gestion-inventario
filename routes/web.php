@@ -8,6 +8,7 @@ use App\Http\Controllers\Roles\PermissionController;
 use App\Http\Controllers\Profile\PasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\SettingController;
 
 use App\Http\Controllers\DemoController;
 
@@ -29,6 +30,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/cotizaciones', [DemoController::class, 'cotizaciones'])->name('cotizaciones.index');
         Route::get('/logistica', [DemoController::class, 'logistica'])->name('logistica.index');
     });
+
+    // Configuración
+    Route::get('/configuracion', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/configuracion', [SettingController::class, 'update'])->name('settings.update');
 
     Route::resources([
         'usuarios' => UsuarioController::class,

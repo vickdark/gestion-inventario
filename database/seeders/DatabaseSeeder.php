@@ -64,12 +64,15 @@ class DatabaseSeeder extends Seeder
 
         // Crear el usuario administrador único
         Usuario::firstOrCreate(
-            ['email' => 'victormanjarres3mayo@gmail.com'],
+            ['email' => 'correo@correo.com'],
             [
                 'role_id'  => $adminRole->id,
                 'name'     => 'Administrador',
                 'password' => Hash::make('admin123456789'),
             ]
         );
+
+        // Sembrar configuración inicial
+        $this->call(SettingSeeder::class);
     }
 }

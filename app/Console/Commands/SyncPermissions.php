@@ -98,6 +98,8 @@ class SyncPermissions extends Command
     protected function generateName($slug)
     {
         if ($slug === 'dashboard') return 'Dashboard General';
+        if ($slug === 'settings.index') return 'Configuración';
+        if ($slug === 'settings.update') return 'Actualizar Configuración';
         
         // Nombres específicos para el módulo de eventos
         if (str_starts_with($slug, 'eventos.')) {
@@ -214,6 +216,7 @@ class SyncPermissions extends Command
     protected function generateIcon($slug)
     {
         if ($slug === 'dashboard') return 'fa-solid fa-gauge-high';
+        if (str_starts_with($slug, 'settings.')) return 'fa-solid fa-gear';
 
         if (str_starts_with($slug, 'eventos.')) {
             $name = str_replace('eventos.', '', $slug);
@@ -256,6 +259,7 @@ class SyncPermissions extends Command
     protected function generateModuleName($slug)
     {
         if ($slug === 'dashboard') return 'Dashboard';
+        if (str_starts_with($slug, 'settings.')) return 'Configuración';
         
         if (str_starts_with($slug, 'eventos.')) {
             return $this->generateName($slug);

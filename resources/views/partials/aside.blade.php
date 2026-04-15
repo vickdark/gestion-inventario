@@ -14,67 +14,30 @@
             @php
                 $user = auth()->user();
                 $role = $user ? $user->role : null;
-                $userPermissions = $role 
+                $allPermissions = $role 
                     ? $role->permissions()
                         ->where('is_menu', true)
                         ->orderBy('order')
                         ->get()
-                        ->groupBy('module')
                     : collect();
             @endphp
 
-            @if($userPermissions->isEmpty())
+            @if($allPermissions->isEmpty())
                 <div class="p-3 text-muted small">
                     <i class="fa-solid fa-circle-info me-1"></i>
                     No hay opciones de menú disponibles.
                 </div>
             @endif
 
-            @foreach($userPermissions as $module => $items)
-                @if($module === 'Dashboard' || $items->count() === 1)
-                    @foreach($items as $item)
-                        @php
-                            // El dashboard o ítems individuales son activos si la ruta coincide o empieza por el slug base
-                            $isActive = request()->routeIs($item->slug) || request()->routeIs(explode('.', $item->slug)[0] . '.*');
-                        @endphp
-                        <a class="nav-link {{ $isActive ? 'active' : '' }}" href="{{ Route::has($item->slug) ? route($item->slug) : '#' }}">
-                            <i class="{{ $item->icon ?: 'fa-solid fa-circle-dot' }}"></i>
-                            <span class="app-link-text">{{ $item->nombre }}</span>
-                        </a>
-                    @endforeach
-                @else
-                    @php
-                        $moduleSlug = \Illuminate\Support\Str::slug($module);
-                        $isActive = false;
-                        foreach($items as $item) {
-                            if(request()->routeIs(explode('.', $item->slug)[0] . '.*')) {
-                                $isActive = true;
-                                break;
-                            }
-                        }
-                    @endphp
-                    
-                    <div class="nav-item">
-                        <a class="nav-link {{ $isActive ? '' : 'collapsed' }}" 
-                           data-bs-toggle="collapse" 
-                           href="#menu-{{ $moduleSlug }}" 
-                           role="button" 
-                           aria-expanded="{{ $isActive ? 'true' : 'false' }}">
-                            <i class="{{ $items->first()->icon ?: 'fa-solid fa-circle-dot' }}"></i>
-                            <span class="app-link-text">{{ $module }}</span>
-                            <i class="fa-solid fa-chevron-down ms-auto nav-chevron"></i>
-                        </a>
-                        <div class="collapse {{ $isActive ? 'show' : '' }}" id="menu-{{ $moduleSlug }}" data-bs-parent="#sidebarAccordion">
-                            <nav class="nav flex-column ms-3 mt-1">
-                                @foreach($items as $item)
-                                    <a class="nav-link py-1 {{ request()->routeIs($item->slug) ? 'active' : '' }}" href="{{ Route::has($item->slug) ? route($item->slug) : '#' }}">
-                                        <span class="small">{{ $item->nombre }}</span>
-                                    </a>
-                                @endforeach
-                            </nav>
-                        </div>
-                    </div>
-                @endif
+            @foreach($allPermissions as $item)
+                @php
+                    // Un ítem es activo si la ruta actual coincide exactamente con su slug
+                    $isActive = request()->routeIs($item->slug);
+                @endphp
+                <a class="nav-link {{ $isActive ? 'active' : '' }}" href="{{ Route::has($item->slug) ? route($item->slug) : '#' }}">
+                    <i class="{{ $item->icon ?: 'fa-solid fa-circle-dot' }}"></i>
+                    <span class="app-link-text">{{ $item->nombre }}</span>
+                </a>
             @endforeach
         </nav>
 

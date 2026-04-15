@@ -99,6 +99,7 @@ class SyncPermissions extends Command
     {
         if ($slug === 'dashboard') return 'Dashboard General';
         
+        // Nombres específicos para el módulo de eventos
         if (str_starts_with($slug, 'eventos.')) {
             $name = str_replace('eventos.', '', $slug);
             $name = str_replace('.index', '', $name);
@@ -116,6 +117,7 @@ class SyncPermissions extends Command
             return $names[$name] ?? ucfirst($name);
         }
 
+        // Dashboard por rol
         if (str_starts_with($slug, 'dashboard.')) {
             $role = ucfirst(str_replace('dashboard.', '', $slug));
             return "Dashboard {$role}";
@@ -125,10 +127,22 @@ class SyncPermissions extends Command
         $action = end($parts);
         $module = count($parts) > 1 ? $parts[count($parts) - 2] : 'General';
 
-        $translations = $this->getTranslations();
+        // Traducciones personalizadas para los módulos principales
+        $moduleTranslations = [
+            'usuarios' => 'Usuarios',
+            'roles' => 'Roles',
+            'permissions' => 'Permisos',
+        ];
 
+        $moduleName = $moduleTranslations[strtolower($module)] ?? ucfirst($module);
+
+        // Si es la acción principal (index), solo devolvemos el nombre del módulo
+        if ($action === 'index') {
+            return $moduleName;
+        }
+
+        $translations = $this->getTranslations();
         $actionName = $translations[$action] ?? ucfirst($action);
-        $moduleName = ucfirst($module);
 
         return "{$actionName} {$moduleName}";
     }
@@ -177,27 +191,21 @@ class SyncPermissions extends Command
 
     /**
      * Determina si la ruta debe aparecer en el menú.
+     * Solo permitimos la ruta principal (index) de cada módulo.
      */
     protected function isMenu($slug)
     {
+        // El dashboard principal siempre va
         if ($slug === 'dashboard') return true;
         
-        // No mostrar dashboards específicos de rol en el menú directamente,
-        // ya que el DashboardController se encarga de redirigir.
-        if (str_starts_with($slug, 'dashboard.')) return false;
+        // Para el módulo de eventos, permitimos su dashboard propio
+        if ($slug === 'eventos.dashboard') return true;
 
+        // Para el resto, solo permitimos la acción 'index' (la lista principal)
         $parts = explode('.', $slug);
         $action = end($parts);
 
-        // Excluimos explícitamente las acciones que requieren ID o no tienen sentido en el menú
-        $excludedActions = ['show', 'edit', 'destroy', 'update', 'store', 'update_permissions', 'edit_permissions', 'sync'];
-        
-        if (in_array($action, $excludedActions)) {
-            return false;
-        }
-
-        // Cualquier otra acción (index, create, sync, export, etc.) puede ir al menú
-        return true;
+        return $action === 'index';
     }
 
     /**

@@ -249,7 +249,9 @@ class SyncPermissions extends Command
     {
         if ($slug === 'dashboard') return 'Dashboard';
         
-        if (str_starts_with($slug, 'eventos.')) return 'Gestión Eventos';
+        if (str_starts_with($slug, 'eventos.')) {
+            return $this->generateName($slug);
+        }
 
         $parts = explode('.', $slug);
         if (count($parts) <= 1) return 'General';

@@ -31,15 +31,14 @@
             @endif
 
             @foreach($userPermissions as $module => $items)
-                @if($module === 'Dashboard')
+                @if($module === 'Dashboard' || $items->count() === 1)
                     @foreach($items as $item)
                         @php
-                            // El dashboard es un caso especial: es activo si la ruta es 'dashboard' 
-                            // o cualquier ruta que empiece por 'dashboard.'
-                            $isDashboardActive = request()->routeIs('dashboard') || request()->routeIs('dashboard.*');
+                            // El dashboard o ítems individuales son activos si la ruta coincide o empieza por el slug base
+                            $isActive = request()->routeIs($item->slug) || request()->routeIs(explode('.', $item->slug)[0] . '.*');
                         @endphp
-                        <a class="nav-link {{ $isDashboardActive ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                            <i class="{{ $item->icon ?: 'fa-solid fa-gauge-high' }}"></i>
+                        <a class="nav-link {{ $isActive ? 'active' : '' }}" href="{{ Route::has($item->slug) ? route($item->slug) : '#' }}">
+                            <i class="{{ $item->icon ?: 'fa-solid fa-circle-dot' }}"></i>
                             <span class="app-link-text">{{ $item->nombre }}</span>
                         </a>
                     @endforeach

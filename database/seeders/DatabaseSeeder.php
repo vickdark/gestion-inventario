@@ -74,5 +74,7 @@ class DatabaseSeeder extends Seeder
 
         // Sembrar configuración inicial
         $this->call(SettingSeeder::class);
+        $this->call(ClienteSeeder::class);
+        $this->call(EquipoSeeder::class);
     }
 }

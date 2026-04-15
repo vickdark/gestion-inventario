@@ -76,5 +76,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SettingSeeder::class);
         $this->call(ClienteSeeder::class);
         $this->call(EquipoSeeder::class);
+        $this->call(PaqueteSeeder::class);
     }
 }

@@ -22,4 +22,11 @@ class Equipo extends Model
     {
         return $this->belongsTo(CategoriaEquipo::class, 'categoria_id');
     }
+
+    public function paquetes()
+    {
+        return $this->belongsToMany(Paquete::class, 'equipo_paquete')
+                    ->withPivot('cantidad')
+                    ->withTimestamps();
+    }
 }

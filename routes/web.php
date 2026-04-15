@@ -11,6 +11,7 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\EquipoController;
+use App\Http\Controllers\PaqueteController;
 
 use App\Http\Controllers\DemoController;
 
@@ -32,7 +33,9 @@ Route::middleware('auth')->group(function () {
         // Equipos CRUD real
         Route::resource('equipos', EquipoController::class);
 
-        Route::get('/paquetes', [DemoController::class, 'paquetes'])->name('paquetes.index');
+        // Paquetes CRUD real
+        Route::resource('paquetes', PaqueteController::class);
+
         Route::get('/agenda', [DemoController::class, 'agenda'])->name('agenda.index');
         Route::get('/cotizaciones', [DemoController::class, 'cotizaciones'])->name('cotizaciones.index');
         Route::get('/logistica', [DemoController::class, 'logistica'])->name('logistica.index');

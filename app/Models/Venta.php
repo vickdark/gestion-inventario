@@ -23,6 +23,13 @@ class Venta extends Model
         'estado_pago',
         'metodo_pago',
         'notas',
+        'direccion_evento',
+        'ubicacion_link',
+        'vehiculo',
+        'personal_asignado',
+        'estado_logistica',
+        'progreso_logistica',
+        'notas_logistica',
         'created_by'
     ];
 
@@ -45,6 +52,16 @@ class Venta extends Model
     public function cotizacion(): BelongsTo
     {
         return $this->belongsTo(Cotizacion::class);
+    }
+
+    public function gastos()
+    {
+        return $this->hasMany(Gasto::class);
+    }
+
+    public function pagos()
+    {
+        return $this->hasMany(Pago::class);
     }
 
     public function creator(): BelongsTo

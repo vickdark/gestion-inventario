@@ -71,14 +71,14 @@
                     }
                 }
             ],
-            data: ventas.map(v => ({
-                id: v.id,
-                factura: v.numero_factura,
-                cliente: v.cliente ? v.cliente.nombre : 'N/A',
-                fecha: new Date(v.fecha_venta).toLocaleDateString(),
-                total: v.total,
-                pago: v.estado_pago
-            })),
+            data: ventas.map(v => [
+                v.id,
+                v.numero_factura,
+                v.cliente ? v.cliente.nombre : 'N/A',
+                new Date(v.fecha_venta).toLocaleDateString(),
+                v.total,
+                v.estado_pago
+            ]),
             search: true,
             pagination: { limit: 10 },
             sort: true,
@@ -92,7 +92,7 @@
                 }
             },
             style: { table: { 'white-space': 'nowrap' } }
-        }).render(document.getElementById('grid-ventas'));
+        }).render();
 
         // Manejo de eliminación con SweetAlert
         document.addEventListener('click', function(e) {

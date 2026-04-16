@@ -100,6 +100,38 @@ class VentaSeeder extends Seeder
                 'total' => $total,
             ]);
 
+            // Generar algunos gastos
+            if ($venta->estado_pago !== 'anulado') {
+                $numGastos = rand(1, 3);
+                $tipos = ['Combustible', 'Peajes', 'Alimentación', 'Otros'];
+                for ($j = 0; $j < $numGastos; $j++) {
+                    $venta->gastos()->create([
+                        'tipo_gasto' => $tipos[array_rand($tipos)],
+                        'monto' => rand(20000, 100000),
+                        'descripcion' => 'Gasto de seeder',
+                        'fecha' => $venta->fecha_venta,
+                        'created_by' => $user->id ?? null,
+                    ]);
+                }
+
+                // Generar pagos según el estado
+                if ($venta->estado_pago === 'pagado') {
+                    $venta->pagos()->create([
+                        'monto' => $venta->total,
+                        'metodo_pago' => 'Transferencia',
+                        'fecha' => $venta->fecha_venta,
+                        'created_by' => $user->id ?? null,
+                    ]);
+                } elseif ($venta->estado_pago === 'parcial') {
+                    $venta->pagos()->create([
+                        'monto' => $venta->total * 0.5,
+                        'metodo_pago' => 'Efectivo',
+                        'fecha' => $venta->fecha_venta,
+                        'created_by' => $user->id ?? null,
+                    ]);
+                }
+            }
+
             $contador++;
         }
     }

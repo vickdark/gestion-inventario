@@ -13,12 +13,14 @@ export default class DataGrid {
                 },
                 'noRecordsFound': 'No se encontraron registros',
                 'loading': 'Cargando...',
+                ...options.language
             },
             className: {
                 table: 'table table-hover',
                 thead: 'bg-light',
                 th: 'py-3 text-secondary text-uppercase small fw-bold',
-                td: 'py-3 align-middle'
+                td: 'py-3 align-middle',
+                ...options.className
             },
             resizable: true,
             sort: true,
@@ -26,10 +28,12 @@ export default class DataGrid {
                 limit: options.limit || 10,
                 server: options.url ? true : false,
                 summary: true,
-                buttonsCount: 5
+                buttonsCount: 5,
+                ...options.pagination
             },
             search: {
-                server: options.url ? true : false
+                server: options.url ? true : false,
+                ...options.search
             },
             server: options.url ? {
                 url: options.url,
@@ -46,7 +50,6 @@ export default class DataGrid {
                     if (res.status === 404) return { data: [], total: 0 };
                     if (res.ok) return res.json();
                     
-                    // Si el error es un error de servidor (HTML), mostramos algo útil en consola
                     return res.text().then(text => {
                         console.error('Error del servidor (no es JSON):', text.substring(0, 200));
                         return { data: [], total: 0 };

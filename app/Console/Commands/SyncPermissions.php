@@ -114,6 +114,7 @@ class SyncPermissions extends Command
                 'agenda' => 'Agenda',
                 'cotizaciones' => 'Cotizaciones',
                 'logistica' => 'Logística',
+                'finanzas' => 'Finanzas',
             ];
             
             return $names[$name] ?? ucfirst($name);
@@ -230,6 +231,7 @@ class SyncPermissions extends Command
                 'agenda' => 'fa-solid fa-calendar-days',
                 'cotizaciones' => 'fa-solid fa-file-invoice',
                 'logistica' => 'fa-solid fa-truck-fast',
+                'finanzas' => 'fa-solid fa-coins',
             ];
             
             return $icons[$name] ?? 'fa-solid fa-circle-dot';

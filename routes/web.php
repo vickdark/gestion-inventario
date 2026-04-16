@@ -14,6 +14,7 @@ use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\PaqueteController;
 use App\Http\Controllers\CotizacionController;
 use App\Http\Controllers\VentaController;
+use App\Http\Controllers\FinanceController;
 
 use App\Http\Controllers\DemoController;
 
@@ -46,9 +47,15 @@ Route::middleware('auth')->group(function () {
         Route::post('cotizaciones/{cotizacion}/reabrir', [CotizacionController::class, 'reabrir'])->name('cotizaciones.reabrir');
         Route::resource('ventas', VentaController::class);
         Route::get('ventas/{venta}/factura', [VentaController::class, 'factura'])->name('ventas.factura');
+        Route::post('ventas/{venta}/logistica', [VentaController::class, 'updateLogistica'])->name('ventas.logistica.update');
+        Route::post('ventas/{venta}/gastos', [VentaController::class, 'storeGasto'])->name('ventas.gastos.store');
 
         Route::get('/agenda', [DemoController::class, 'agenda'])->name('agenda.index');
         Route::get('/logistica', [DemoController::class, 'logistica'])->name('logistica.index');
+        Route::get('/logistica/checklist', [DemoController::class, 'checklistGeneral'])->name('logistica.checklist');
+        
+        Route::get('/finanzas', [FinanceController::class, 'index'])->name('finanzas.index');
+        Route::post('/ventas/{venta}/pagos', [FinanceController::class, 'storePago'])->name('ventas.pagos.store');
     });
 
     // Configuración

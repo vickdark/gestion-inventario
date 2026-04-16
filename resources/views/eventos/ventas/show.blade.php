@@ -168,7 +168,64 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Card de Logística -->
+            <div class="card border-0 shadow-sm rounded-4 mt-4 overflow-hidden">
+                <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                    <h6 class="fw-bold mb-0">Estado de Logística</h6>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="badge {{ 
+                            match($venta->estado_logistica) {
+                                'pendiente' => 'bg-secondary',
+                                'en_montaje' => 'bg-info',
+                                'montado' => 'bg-success',
+                                'recogiendo' => 'bg-warning',
+                                'finalizado' => 'bg-primary',
+                                default => 'bg-secondary'
+                            }
+                        }} bg-opacity-10 {{ 
+                            match($venta->estado_logistica) {
+                                'pendiente' => 'text-secondary',
+                                'en_montaje' => 'text-info',
+                                'montado' => 'text-success',
+                                'recogiendo' => 'text-warning',
+                                'finalizado' => 'text-primary',
+                                default => 'text-secondary'
+                            }
+                        }} rounded-pill px-3 py-1 text-capitalize">
+                            {{ str_replace('_', ' ', $venta->estado_logistica) }}
+                        </span>
+                        <span class="fw-bold text-primary">{{ $venta->progreso_logistica }}%</span>
+                    </div>
+                    <div class="progress mb-4" style="height: 8px;">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $venta->progreso_logistica }}%"></div>
+                    </div>
+
+                    <div class="row g-3 small">
+                        <div class="col-12">
+                            <span class="text-muted d-block small text-uppercase fw-bold">Dirección</span>
+                            <span class="fw-bold">{{ $venta->direccion_evento ?? 'No definida' }}</span>
+                            @if($venta->ubicacion_link)
+                                <a href="{{ $venta->ubicacion_link }}" target="_blank" class="ms-2 text-primary">
+                                    <i class="fa-solid fa-map-location-dot"></i>
+                                </a>
+                            @endif
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted d-block small text-uppercase fw-bold">Vehículo</span>
+                            <span class="fw-bold">{{ $venta->vehiculo ?? 'Sin asignar' }}</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted d-block small text-uppercase fw-bold">Personal</span>
+                            <span class="fw-bold">{{ $venta->personal_asignado ?? 'Sin asignar' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 @endsection

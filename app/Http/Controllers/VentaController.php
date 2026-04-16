@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Venta;
 use App\Models\VentaItem;
+use App\Models\Gasto;
 use App\Models\Cliente;
 use App\Models\Equipo;
 use App\Models\Paquete;
@@ -235,5 +236,51 @@ class VentaController extends Controller
         $venta->delete();
         return redirect()->route('eventos.ventas.index')
             ->with('success', 'Venta eliminada correctamente.');
+    }
+
+    public function updateLogistica(Request $request, Venta $venta)
+    {
+        $data = $request->validate([
+            'direccion_evento' => 'nullable|string|max:255',
+            'ubicacion_link' => 'nullable|string|max:255',
+            'vehiculo' => 'nullable|string|max:255',
+            'personal_asignado' => 'nullable|string',
+            'estado_logistica' => 'required|in:pendiente,en_montaje,montado,recogiendo,finalizado',
+            'notas_logistica' => 'nullable|string',
+        ]);
+
+        // Calcular progreso automáticamente basado en el estado
+        $data['progreso_logistica'] = match($data['estado_logistica']) {
+            'pendiente' => 0,
+            'en_montaje' => 30,
+            'montado' => 60,
+            'recogiendo' => 85,
+            'finalizado' => 100,
+            default => 0,
+        };
+
+        $venta->update($data);
+
+        return back()->with('success', 'Datos de logística actualizados correctamente.');
+    }
+
+    public function storeGasto(Request $request, Venta $venta)
+    {
+        $request->validate([
+            'tipo_gasto' => 'required|string',
+            'monto' => 'required|numeric|min:0',
+            'descripcion' => 'nullable|string|max:255',
+            'fecha' => 'required|date',
+        ]);
+
+        $venta->gastos()->create([
+            'tipo_gasto' => $request->tipo_gasto,
+            'monto' => $request->monto,
+            'descripcion' => $request->descripcion,
+            'fecha' => $request->fecha,
+            'created_by' => Auth::id(),
+        ]);
+
+        return back()->with('success', 'Gasto registrado correctamente.');
     }
 }

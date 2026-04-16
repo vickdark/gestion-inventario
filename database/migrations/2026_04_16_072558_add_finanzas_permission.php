@@ -14,7 +14,6 @@ return new class extends Migration
         $id = \DB::table('permissions')->insertGetId([
             'nombre' => 'Finanzas',
             'slug' => 'eventos.finanzas.index',
-            'parent_id' => null,
             'icon' => 'fa-solid fa-coins',
             'is_menu' => true,
             'order' => 10,

@@ -12,6 +12,8 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\PaqueteController;
+use App\Http\Controllers\CotizacionController;
+use App\Http\Controllers\VentaController;
 
 use App\Http\Controllers\DemoController;
 
@@ -36,8 +38,16 @@ Route::middleware('auth')->group(function () {
         // Paquetes CRUD real
         Route::resource('paquetes', PaqueteController::class);
 
+        // Cotizaciones y Ventas
+        Route::resource('cotizaciones', CotizacionController::class)->parameters(['cotizaciones' => 'cotizacion']);
+        Route::get('cotizaciones/{cotizacion}/comprobante', [CotizacionController::class, 'comprobante'])->name('cotizaciones.comprobante');
+        Route::post('cotizaciones/{cotizacion}/convertir', [CotizacionController::class, 'convertir'])->name('cotizaciones.convertir');
+        Route::post('cotizaciones/{cotizacion}/rechazar', [CotizacionController::class, 'rechazar'])->name('cotizaciones.rechazar');
+        Route::post('cotizaciones/{cotizacion}/reabrir', [CotizacionController::class, 'reabrir'])->name('cotizaciones.reabrir');
+        Route::resource('ventas', VentaController::class);
+        Route::get('ventas/{venta}/factura', [VentaController::class, 'factura'])->name('ventas.factura');
+
         Route::get('/agenda', [DemoController::class, 'agenda'])->name('agenda.index');
-        Route::get('/cotizaciones', [DemoController::class, 'cotizaciones'])->name('cotizaciones.index');
         Route::get('/logistica', [DemoController::class, 'logistica'])->name('logistica.index');
     });
 

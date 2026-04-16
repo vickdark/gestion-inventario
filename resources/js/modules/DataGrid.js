@@ -22,7 +22,7 @@ export default class DataGrid {
             },
             resizable: true,
             sort: true,
-            pagination: { 
+            pagination: {
                 limit: options.limit || 10,
                 server: options.url ? true : false,
                 summary: true,

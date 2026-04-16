@@ -89,7 +89,7 @@
                         if (!id) return '';
                         return DataGrid.html(`
                             <div class="btn-group">
-                                <button class="btn btn-sm btn-light rounded-3 px-3 fw-bold text-primary" title="Cotizar"><i class="fa-solid fa-file-invoice-dollar"></i></button>
+                                <a href="/eventos/cotizaciones/create?cliente_id=${id}" class="btn btn-sm btn-light rounded-3 px-3 fw-bold text-primary" title="Cotizar"><i class="fa-solid fa-file-invoice-dollar"></i></a>
                                 <a href="/eventos/clientes/${id}/edit" class="btn btn-sm btn-light rounded-3 mx-1 d-flex align-items-center" title="Editar"><i class="fa-solid fa-pen"></i></a>
                                 <form action="/eventos/clientes/${id}" method="POST" class="d-inline delete-form">
                                     @csrf

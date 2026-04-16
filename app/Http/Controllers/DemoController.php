@@ -9,14 +9,59 @@ class DemoController extends Controller
 {
     public function dashboard()
     {
-        return view('eventos.dashboard', [
-            'eventos_dia' => Venta::whereDate('fecha_evento_inicio', now())->count(),
-            'eventos_proximos' => Venta::where('fecha_evento_inicio', '>', now())->count(),
-            'equipos_ocupados' => 45,
-            'equipos_disponibles' => 120,
-            'cotizaciones_pendientes' => \App\Models\Cotizacion::where('estado', 'pendiente')->count(),
-            'alertas' => 3
-        ]);
+        $hoy = now()->toDateString();
+        
+        // Conteo de eventos
+        $eventos_dia = Venta::whereDate('fecha_evento_inicio', $hoy)->count();
+        $eventos_proximos = Venta::where('fecha_evento_inicio', '>', $hoy)
+            ->where('estado_logistica', '!=', 'finalizado')
+            ->count();
+            
+        // Cotizaciones pendientes
+        $cotizaciones_pendientes = \App\Models\Cotizacion::where('estado', 'pendiente')->count();
+        
+        // Cálculo de ocupación de equipos (Simplicado: ratio de equipos en ventas activas vs total)
+        $total_equipos = \App\Models\Equipo::sum('cantidad_total') ?: 1;
+        $equipos_alquilados = \App\Models\VentaItem::whereHas('venta', function($q) {
+                $q->where('estado_logistica', '!=', 'finalizado');
+            })->where('itemable_type', \App\Models\Equipo::class)
+            ->sum('cantidad');
+            
+        $equipos_disponibles = $total_equipos - $equipos_alquilados;
+        
+        // Alertas: Eventos en las próximas 48h con logística pendiente
+        $alertas = Venta::where('fecha_evento_inicio', '<=', now()->addHours(48))
+            ->where('fecha_evento_inicio', '>=', now())
+            ->where('estado_logistica', 'pendiente')
+            ->count();
+
+        // Próximos eventos para la lista
+        $proximos_eventos = Venta::with('cliente')
+            ->where('fecha_evento_inicio', '>=', $hoy)
+            ->where('estado_logistica', '!=', 'finalizado')
+            ->orderBy('fecha_evento_inicio', 'asc')
+            ->take(5)
+            ->get();
+
+        // Equipos críticos (Top 3 con menor porcentaje de disponibilidad)
+        $equipos_criticos = \App\Models\Equipo::all()->map(function($e) {
+            $ocupados = \App\Models\VentaItem::whereHas('venta', function($q) {
+                $q->where('estado_logistica', '!=', 'finalizado');
+            })->where('itemable_id', $e->id)
+              ->where('itemable_type', \App\Models\Equipo::class)
+              ->sum('cantidad');
+            
+            $e->ocupados = $ocupados;
+            $e->disponibles = max(0, $e->cantidad_total - $ocupados);
+            $e->porcentaje_uso = $e->cantidad_total > 0 ? ($ocupados / $e->cantidad_total) * 100 : 0;
+            return $e;
+        })->sortByDesc('porcentaje_uso')->take(3);
+
+        return view('eventos.dashboard', compact(
+            'eventos_dia', 'eventos_proximos', 'equipos_alquilados', 
+            'equipos_disponibles', 'cotizaciones_pendientes', 'alertas', 
+            'proximos_eventos', 'equipos_criticos', 'total_equipos'
+        ));
     }
 
     public function clientes()
@@ -55,17 +100,40 @@ class DemoController extends Controller
 
     public function agenda()
     {
-        $eventos = Venta::with('cliente')
+        $eventos = Venta::with(['cliente', 'items.itemable'])
             ->whereNotNull('fecha_evento_inicio')
             ->get()
             ->map(function($venta) {
+                $items = $venta->items->map(function($item) {
+                    return [
+                        'nombre' => $item->itemable->nombre ?? 'Producto',
+                        'cantidad' => $item->cantidad,
+                        'precio' => '$' . number_format($item->precio_unitario, 0),
+                    ];
+                });
+
                 return [
                     'id' => $venta->id,
-                    'title' => $venta->cliente->nombre . " - " . ($venta->direccion_evento ?? 'Sin dirección'),
+                    'title' => $venta->cliente->nombre . " (" . $venta->numero_factura . ")",
                     'start' => $venta->fecha_evento_inicio->format('Y-m-d H:i:s'),
                     'end' => $venta->fecha_evento_fin ? $venta->fecha_evento_fin->format('Y-m-d H:i:s') : null,
-                    'url' => route('eventos.ventas.show', $venta->id),
                     'color' => $this->getColorByEstadoLogistica($venta->estado_logistica),
+                    'extendedProps' => [
+                        'factura' => $venta->numero_factura,
+                        'cliente' => $venta->cliente->nombre,
+                        'telefono' => $venta->cliente->telefono,
+                        'direccion' => $venta->direccion_evento ?? 'Sin dirección',
+                        'logistica' => ucfirst(str_replace('_', ' ', $venta->estado_logistica)),
+                        'monto' => '$' . number_format($venta->monto_total, 0),
+                        'saldo' => '$' . number_format($venta->monto_total - $venta->pagos()->sum('monto'), 0),
+                        'items_count' => $venta->items->count(),
+                        'items' => $items,
+                        'vehiculo' => $venta->vehiculo ?? 'No asignado',
+                        'personal' => $venta->personal_asignado ?? 'No asignado',
+                        'ubicacion_link' => $venta->ubicacion_link,
+                        'notas_logistica' => $venta->notas_logistica ?? 'Sin notas adicionales',
+                        'url_show' => route('eventos.ventas.show', $venta->id)
+                    ]
                 ];
             });
 

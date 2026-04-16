@@ -115,6 +115,7 @@ class SyncPermissions extends Command
                 'cotizaciones' => 'Cotizaciones',
                 'logistica' => 'Logística',
                 'finanzas' => 'Finanzas',
+                'ventas' => 'Ventas',
             ];
             
             return $names[$name] ?? ucfirst($name);
@@ -232,6 +233,7 @@ class SyncPermissions extends Command
                 'cotizaciones' => 'fa-solid fa-file-invoice',
                 'logistica' => 'fa-solid fa-truck-fast',
                 'finanzas' => 'fa-solid fa-coins',
+                'ventas' => 'fa-solid fa-handshake-angle',
             ];
             
             return $icons[$name] ?? 'fa-solid fa-circle-dot';
@@ -281,9 +283,28 @@ class SyncPermissions extends Command
     protected function generateOrder($slug)
     {
         if ($slug === 'dashboard') return 1;
-        if (str_contains($slug, 'usuarios')) return 10;
-        if (str_contains($slug, 'roles')) return 20;
-        if (str_contains($slug, 'infraestructura')) return 100;
-        return 50;
+
+        // Módulo de Eventos (Organización Solicitada)
+        if (str_starts_with($slug, 'eventos.')) {
+            $name = str_replace(['eventos.', '.index'], '', $slug);
+            $orders = [
+                'dashboard'    => 10,
+                'clientes'     => 20,
+                'equipos'      => 30,
+                'paquetes'     => 40,
+                'agenda'       => 50,
+                'cotizaciones' => 60,
+                'ventas'       => 70,
+                'logistica'    => 80,
+                'finanzas'     => 90,
+            ];
+            return $orders[$name] ?? 100;
+        }
+
+        if (str_contains($slug, 'usuarios')) return 200;
+        if (str_contains($slug, 'roles')) return 210;
+        if (str_contains($slug, 'settings')) return 300;
+        
+        return 150;
     }
 }

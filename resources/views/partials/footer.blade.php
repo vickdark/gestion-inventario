@@ -1,7 +1,7 @@
             </div>
         <footer class="app-footer">
-            <span>{{ config('app.name', 'Laravel') }} {{ date('Y') }}</span>
-            <span>Hecho con Bootstrap 5</span>
+            <span>&copy; {{ date('Y') }} {{ config('app.name', 'Laravel') }}. Todos los derechos reservados.</span>
+            <span>Hecho con ❤️ por MambaCode</span>
         </footer>
     </main>
 </div>

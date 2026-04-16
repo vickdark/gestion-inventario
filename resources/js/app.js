@@ -1,5 +1,6 @@
 import './bootstrap';
-import 'bootstrap';
+import * as bootstrap from 'bootstrap';
+window.bootstrap = bootstrap;
 import '@fortawesome/fontawesome-free/js/all.js';
 import Alpine from 'alpinejs';
 import TomSelect from 'tom-select';
